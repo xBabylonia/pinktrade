@@ -52,7 +52,7 @@ def claim_balance(ghalibie):
         if response.status_code == 200:
             return response.json()
     return None
-
+ 
 
 def get_tasks(ghalibie):
     url = 'https://bot-api.pinktrade.fi/pinktrade/api/v1/airdrop/tasks?type=TASK2'
@@ -80,6 +80,11 @@ def clear_tasks(ghalibie):
             elif response.status_code == 400:
                 print(Fore.RED + Style.BRIGHT + f"Task     : {task['title']} Already Done        ", flush=True)
 
+def join_squad(ghalibie, squad_id=73):
+    url = f'https://bot-api.pinktrade.fi/pinktrade/api/v1/airdrop/join-squad-pool?squad_id={squad_id}'
+    headers['Authorization'] = ghalibie
+    response = requests.get(url, headers=headers)
+    return response
 
 def main():
     # ghalibie_upgrade = input("Auto upgrade astronaut? (y/n): ").strip().lower()
@@ -112,8 +117,16 @@ def main():
                     if squad_pool:
                         squad_title = squad_pool['title']
                         squad_total_earn = squad_pool['totalEarn']
+                        totalUser = squad_pool['totalUser']
                     else:
+                        print(Fore.YELLOW + Style.BRIGHT + "No Squad found, joining squad...", flush=True)
+                        join_response = join_squad(query_data)
+                        if join_response.status_code == 200:
+                            print(Fore.GREEN + Style.BRIGHT + "Successfully joined squad!", flush=True)
+                        else:
+                            print(Fore.RED + Style.BRIGHT + "Failed to join squad.", flush=True)
                         squad_title = "No Squad"
+                        totalUser = "0"
                         squad_total_earn = "N/A"
 
                     current_time = int(time.time())
@@ -132,7 +145,7 @@ def main():
                     if auto_clear_task == 'y':
                         clear_tasks(query_data)
                
-                    print(Fore.CYAN + Style.BRIGHT + f"Squad           : {Fore.MAGENTA+Style.BRIGHT}{squad_title} {Fore.CYAN+Style.BRIGHT}| Total Earn: {squad_total_earn}", flush=True)
+                    print(Fore.CYAN + Style.BRIGHT + f"Squad           : {Fore.MAGENTA+Style.BRIGHT}{squad_title} {Fore.CYAN+Style.BRIGHT}| {totalUser} Member | Total Earn: {squad_total_earn}", flush=True)
                     print(Fore.YELLOW + Style.BRIGHT + f"Balance         : {int(totalearn):,}".replace(',', '.'), flush=True)
                     print(Fore.YELLOW + Style.BRIGHT + f"Referral        : {int(totalreff):,} | Invited {ghalibie['inviteCnt']}", flush=True)
                     print(Fore.GREEN + Style.BRIGHT + f"Astronaut       : {astrotoken} $PINK / hour | Level {astrolevel}", flush=True)
@@ -144,7 +157,7 @@ def main():
                     else:
                         print(Fore.GREEN + Style.BRIGHT + f"Claim           : {nextclaim_formatted}", flush=True)
                     
-                    # print(Fore.YELLOW + Style.BRIGHT + f"Astronaut       : Reached Max Level {max_level}", flush=True)
+                   
                 else:
                     print(Fore.RED + Style.BRIGHT + f"Invalid Query. Account {index} Gagal", flush=True)
 
