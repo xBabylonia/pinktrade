@@ -80,7 +80,7 @@ def clear_tasks(ghalibie):
             elif response.status_code == 400:
                 print(Fore.RED + Style.BRIGHT + f"Task     : {task['title']} Already Done        ", flush=True)
 
-def join_squad(ghalibie, squad_id=73):
+def join_squad(ghalibie, squad_id=61):
     url = f'https://bot-api.pinktrade.fi/pinktrade/api/v1/airdrop/join-squad-pool?squad_id={squad_id}'
     headers['Authorization'] = ghalibie
     response = requests.get(url, headers=headers)
